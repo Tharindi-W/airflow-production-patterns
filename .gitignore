@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+.pytest_cache/
+.ruff_cache/
+
+# Virtual environments (kept in WSL home, never committed)
+.venv/
+venv/
+
+# Local environment file (copy of .env.example with local values)
+.env
+
+# Airflow runtime artifacts (AIRFLOW_HOME lives outside the repo, but guard anyway)
+airflow.cfg
+airflow.db
+airflow-webserver.pid
+webserver_config.py
+logs/
+standalone_admin_password.txt
+
+# OS noise
+.DS_Store
+Thumbs.db

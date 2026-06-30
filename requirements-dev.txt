@@ -1,0 +1,7 @@
+# Development and test tooling. These are not part of the Airflow runtime,
+# so they are not in the Airflow constraints file. Pinned anyway.
+
+pytest==8.3.4
+pre-commit==4.0.1
+black==24.10.0
+ruff==0.8.4

@@ -1,0 +1,39 @@
+# Pre-commit hooks for formatting, linting, and the repo's hard conventions.
+# Install once inside the venv:
+#
+#   pip install -r requirements-dev.txt
+#   pre-commit install
+#
+# Run against everything:
+#
+#   pre-commit run --all-files
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-added-large-files
+      - id: check-merge-conflict
+
+  - repo: https://github.com/psf/black
+    rev: 24.10.0
+    hooks:
+      - id: black
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.8.4
+    hooks:
+      - id: ruff
+        args: [--fix]
+
+  - repo: local
+    hooks:
+      - id: no-em-dash
+        name: no em dash or en dash
+        entry: python scripts/check_no_emdash.py
+        language: system
+        # Text files only. Skip binaries and the lock-like constraints.
+        types_or: [python, markdown, text, yaml, sql, shell]

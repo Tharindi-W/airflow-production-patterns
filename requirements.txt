@@ -1,0 +1,18 @@
+# Runtime dependencies, pinned to the exact versions from the official
+# Airflow 2.10.5 constraints file for Python 3.12.
+#
+# Install with the matching constraints so transitive dependencies resolve
+# the same way every time (see scripts/setup_airflow.sh):
+#
+#   pip install -r requirements.txt \
+#     --constraint "https://raw.githubusercontent.com/apache/airflow/constraints-2.10.5/constraints-3.12.txt"
+#
+# Do not float these to "latest". Reproducibility is part of the point.
+
+apache-airflow==2.10.5
+apache-airflow-providers-postgres==6.0.0
+apache-airflow-providers-common-sql==1.21.0
+psycopg2-binary==2.9.10
+pandas==2.1.4
+pendulum==3.0.0
+requests==2.32.3

@@ -1,0 +1,24 @@
+[tool.black]
+line-length = 100
+target-version = ["py312"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+# E/F: pyflakes + pycodestyle, I: import sorting, UP: pyupgrade, B: bugbear.
+select = ["E", "F", "I", "UP", "B"]
+# Airflow DAG files legitimately keep top-level code; do not flag unused
+# imports that register operators, and allow long lines in generated SQL.
+ignore = ["E501"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+# Skip the heavyweight acceptance tests by default. They need the full running
+# stack (Postgres up, env loaded). Run them explicitly with: pytest -m acceptance
+addopts = "-ra -q -m 'not acceptance'"
+markers = [
+    "acceptance: integration test that needs the full local stack running",
+]

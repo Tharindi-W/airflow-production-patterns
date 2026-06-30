@@ -1,0 +1,8 @@
+# Keep line endings predictable across Windows, WSL, Linux, and macOS.
+# Shell scripts and Python must be LF, otherwise they break when run in WSL.
+* text=auto eol=lf
+*.sh text eol=lf
+*.py text eol=lf
+*.sql text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
