@@ -74,7 +74,7 @@ Status legend: done means implemented, tested, and documented. Planned means spe
 |----|---------|----------------|--------|
 | 01 | [Idempotent ETL](dags/01_idempotent_etl_pipeline/) | Running the same load twice produces no duplicates | done |
 | 02 | [Backfill safe pipeline](dags/02_backfill_safe_pipeline/) | Historical reprocessing without partitions overwriting each other | done |
-| 03 | Event driven sensor | Wait efficiently in reschedule mode rather than poll blindly | planned |
+| 03 | [Event driven sensor](dags/03_event_driven_sensor_pattern/) | Wait efficiently in reschedule mode rather than poll blindly | done |
 | 04 | API ingestion with throttling | Survive 429 and 5xx with backoff and rate limiting | planned |
 | 05 | Slow upstream handling | A slow stage does not cascade into downstream failure | planned |
 | 06 | Dynamic task mapping | N runtime inputs produce N mapped tasks | planned |
