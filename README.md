@@ -1,5 +1,7 @@
 # Airflow Production Patterns
 
+[![CI](https://github.com/Tharindi-W/airflow-production-patterns/actions/workflows/ci.yml/badge.svg)](https://github.com/Tharindi-W/airflow-production-patterns/actions/workflows/ci.yml)
+
 A reference catalogue of production grade Apache Airflow orchestration patterns, the kind a senior data engineer designs for banks, telecoms, and logistics platforms. Each DAG is a design pattern, each folder is a real world scenario, and each README explains the tradeoffs the way a consultant would. The value is in the patterns and the reasoning, not in any single dataset.
 
 This repo runs entirely locally with no Docker and no cloud credentials. The whole stack is Airflow plus Postgres, running natively inside WSL (or any Linux or macOS shell).

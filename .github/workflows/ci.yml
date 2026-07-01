@@ -1,0 +1,90 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+env:
+  AIRFLOW_VERSION: "2.10.5"
+  PY_VERSION: "3.12"
+  CONSTRAINTS: "https://raw.githubusercontent.com/apache/airflow/constraints-2.10.5/constraints-3.12.txt"
+
+jobs:
+  validate:
+    name: Lint and DAG validation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt --constraint "${CONSTRAINTS}"
+          pip install -r requirements-dev.txt
+
+      - name: Ruff
+        run: ruff check .
+
+      - name: Black
+        run: black --check .
+
+      - name: DAG validation
+        run: pytest tests/dag_validation -v
+
+  acceptance:
+    name: Acceptance (end to end with Postgres)
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      AIRFLOW_HOME: ${{ runner.temp }}/airflow
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__CORE__LOAD_EXAMPLES: "False"
+      AIRFLOW__CORE__DAGS_FOLDER: ${{ github.workspace }}/dags
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@localhost:5432/airflow_meta
+      AIRFLOW_CONN_WAREHOUSE: postgresql://warehouse:warehouse@localhost:5432/warehouse
+      PYTHONPATH: ${{ github.workspace }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt --constraint "${CONSTRAINTS}"
+          pip install -r requirements-dev.txt
+
+      - name: Create databases and roles
+        env:
+          PGPASSWORD: postgres
+        run: |
+          psql -h localhost -U postgres -c "CREATE ROLE airflow LOGIN PASSWORD 'airflow';"
+          psql -h localhost -U postgres -c "CREATE ROLE warehouse LOGIN PASSWORD 'warehouse';"
+          psql -h localhost -U postgres -c "CREATE DATABASE airflow_meta OWNER airflow;"
+          psql -h localhost -U postgres -c "CREATE DATABASE warehouse OWNER warehouse;"
+          psql -h localhost -U postgres -d warehouse -c "GRANT ALL ON SCHEMA public TO warehouse;"
+
+      - name: Initialise Airflow metadata database
+        run: airflow db migrate
+
+      - name: Run acceptance tests
+        run: pytest tests/acceptance -m acceptance -o "addopts=" -v
