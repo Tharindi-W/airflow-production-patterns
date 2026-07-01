@@ -53,7 +53,7 @@ jobs:
           --health-timeout 5s
           --health-retries 5
     env:
-      AIRFLOW_HOME: ${{ runner.temp }}/airflow
+      AIRFLOW_HOME: ${{ github.workspace }}/.airflow-home
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
       AIRFLOW__CORE__LOAD_EXAMPLES: "False"
       AIRFLOW__CORE__DAGS_FOLDER: ${{ github.workspace }}/dags
