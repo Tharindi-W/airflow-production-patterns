@@ -5,25 +5,27 @@ When a pipeline fans out across many independent units of work, one unit failing
 ```
   create_tables --> [ fetch_region_A (ok)              ] --> aggregate (all_done)
                     [ fetch_region_B (ok)              ]
-                    [ fetch_region_C (retries, fails)  ] --> handle_failure (one_failed)
+                    [ fetch_region_C (retries, fails)  ] --> flag_failures (all_done)
 ```
 
 - DAG id: `retries_and_failure_isolation`
-- Trigger rules: `all_done` for the aggregate, `one_failed` for the failure handler
+- Trigger rules: `all_done` for both the aggregate and the failure detector
 - Tables: `core.region_load` (per region), `core.run_events` (markers)
 
 ## Why this pattern exists
 
 The default trigger rule, `all_success`, is strict: a task runs only if every upstream succeeded. That is the right default for a strict chain, but it is wrong for fan-out. If you load ten regions and one fails, `all_success` skips the aggregate entirely, throwing away nine good regions because of one bad one. That is fragile, not safe.
 
-Real systems want partial success. Two rules express it:
+Real systems want partial success. Trigger rules express it:
 
 - `all_done` on the aggregate: run once the upstreams have finished, whatever their outcome. The aggregate then works with the regions that succeeded and simply notes the ones that did not. Nine good regions still get aggregated.
-- `one_failed` on the failure handler: run as soon as any upstream fails. This is where you raise an alert, write an incident record, or trigger a compensating action, exactly once, only when there was a failure.
+- `all_done` on the failure detector: run once the branches settle, inspect the result, and flag any region that did not arrive. This is where you raise an alert, write an incident record, or trigger a compensating action, only when there was a failure.
+
+There is also `one_failed`, which runs a branch the moment any upstream fails. It is the idiomatic event-driven way to fire a failure handler. This repo uses an `all_done` detector instead for a deterministic, self-contained demo (a `one_failed` branch depends on the scheduler evaluating it at exactly the right moment, which is fine in a live deployment but harder to pin down in a short automated test).
 
 Per-task retries sit underneath this. The failing region here has its own retry budget, so a transient issue gets a second chance before the failure is finally accepted and isolated. Retries handle the transient; trigger rules handle the permanent.
 
-The acceptance test forces region C to fail and asserts the shape of the outcome: A and B are loaded, C recorded nothing, the aggregate ran on the survivors, and the failure handler fired.
+The acceptance test forces region C to fail and asserts the shape of the outcome: A and B are loaded, C recorded nothing, the aggregate ran on the survivors, and the failure was flagged.
 
 ## Failure modes (what breaks and when)
 

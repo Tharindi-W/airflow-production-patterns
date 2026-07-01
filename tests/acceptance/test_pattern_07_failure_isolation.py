@@ -54,7 +54,7 @@ def test_partial_success_and_failure_handling() -> None:
     # The failing region is isolated and recorded nothing.
     assert "C" not in regions, "region C should have failed and recorded nothing"
 
-    # aggregate ran on the survivors (all_done), and the failure was handled
-    # (one_failed).
+    # aggregate ran on the survivors, and the failure was detected and flagged,
+    # both via all_done.
     assert "aggregate" in events, "aggregate should run regardless (all_done)"
-    assert "failure_handled" in events, "failure handler should fire (one_failed)"
+    assert "failure_handled" in events, "the failure should be detected and flagged"

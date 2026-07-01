@@ -17,7 +17,7 @@ A cross-pattern table of failure scenarios and how this repo handles each. Each 
 | Retry amplification on a slow task | 05 | The slow stage is set to `retries=0` so a hang is not multiplied by the retry count. |
 | Unknown number of work units at author time | 06 | Dynamic task mapping fans out one task per runtime input via `.expand()`. |
 | One unit of a fan-out fails | 06, 07 | Each unit is its own task instance with its own retry, so one failure is isolated and the rest complete. |
-| A failure passes unnoticed | 07, 10 | A `one_failed` branch and failure callbacks guarantee a signal when something fails. |
+| A failure passes unnoticed | 07, 10 | An `all_done` failure detector (07) and failure callbacks (10) guarantee a signal when something fails. |
 | Bad data (nulls, empty batch, bad values) reaches the warehouse | 08 | A quality gate staged before load fails the run on violation, blocking the load. |
 | A quality violation is retried pointlessly | 08 | The gate task is `retries=0`, since a data quality failure is not transient. |
 | Tight coupling across systems | 09 | Each hop is behind an interface with an object store in the middle, so systems can be swapped or mocked independently. |

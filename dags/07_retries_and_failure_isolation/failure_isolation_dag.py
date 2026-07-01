@@ -6,8 +6,9 @@ failure. Trigger rules turn that into a partial-success workflow:
 
   - aggregate runs with trigger_rule=all_done, so it proceeds on whatever
     regions succeeded rather than being skipped because one failed.
-  - handle_failure runs with trigger_rule=one_failed, so a failure anywhere in
-    the region branches fires a failure handler exactly once.
+  - flag_failures also runs with trigger_rule=all_done and inspects the result
+    to detect and flag any region that did not arrive, so failure handling is
+    deterministic. one_failed is the event-driven alternative (see the README).
 
 The failing region also has its own retry budget, showing per-task retries
 before the failure is finally accepted and isolated.
@@ -102,11 +103,28 @@ def retries_and_failure_isolation():
         print(f"aggregate: load_date={ds} succeeded_regions={regions}")
         return {"load_date": str(ds), "regions": regions}
 
-    @task(trigger_rule=TriggerRule.ONE_FAILED)
-    def handle_failure(ds: str | None = None) -> None:
-        """Fires when any region failed. Records that the failure was handled."""
-        _note_event(ds, "failure_handled", "at least one region failed")
-        print(f"handle_failure: recorded failure handling for {ds}")
+    @task(trigger_rule=TriggerRule.ALL_DONE)
+    def flag_failures(ds: str | None = None) -> None:
+        """Runs after all regions are done and flags any that did not arrive.
+
+        Using all_done (rather than one_failed) makes the failure handling
+        deterministic: it always runs once the branches settle and inspects the
+        result to decide whether a failure occurred, instead of depending on the
+        scheduler evaluating a one_failed branch at exactly the right moment.
+        """
+        hook = PostgresHook(postgres_conn_id="warehouse")
+        rows = hook.get_records(
+            "SELECT region FROM core.region_load "
+            "WHERE load_date = %(load_date)s AND status = 'ok'",
+            parameters={"load_date": ds},
+        )
+        present = {r[0] for r in rows}
+        missing = sorted({"A", "B", "C"} - present)
+        if missing:
+            _note_event(ds, "failure_handled", f"missing_regions={','.join(missing)}")
+            print(f"flag_failures: handled failure, missing regions={missing}")
+        else:
+            print("flag_failures: all regions present, nothing to handle")
 
     tables = create_tables()
     a = fetch_region_a()
@@ -114,7 +132,7 @@ def retries_and_failure_isolation():
     c = fetch_region_c()
     tables >> [a, b, c]
     [a, b, c] >> aggregate()
-    [a, b, c] >> handle_failure()
+    [a, b, c] >> flag_failures()
 
 
 retries_and_failure_isolation()
