@@ -17,16 +17,31 @@ import os
 import subprocess
 
 
-def run_dag_test(dag_id: str, logical_date: str) -> subprocess.CompletedProcess:
+def _env_with(extra_env: dict[str, str] | None) -> dict[str, str]:
+    env = os.environ.copy()
+    if extra_env:
+        env.update(extra_env)
+    return env
+
+
+def run_dag_test(
+    dag_id: str,
+    logical_date: str,
+    extra_env: dict[str, str] | None = None,
+) -> subprocess.CompletedProcess:
     return subprocess.run(
         ["airflow", "dags", "test", dag_id, logical_date],
         capture_output=True,
         text=True,
-        env=os.environ.copy(),
+        env=_env_with(extra_env),
     )
 
 
-def run_backfill(dag_id: str, logical_date: str) -> subprocess.CompletedProcess:
+def run_backfill(
+    dag_id: str,
+    logical_date: str,
+    extra_env: dict[str, str] | None = None,
+) -> subprocess.CompletedProcess:
     """Run one logical date through the scheduler-like backfill path.
 
     Returns the completed process. The return code may be non-zero when a task
@@ -48,5 +63,5 @@ def run_backfill(dag_id: str, logical_date: str) -> subprocess.CompletedProcess:
         ],
         capture_output=True,
         text=True,
-        env=os.environ.copy(),
+        env=_env_with(extra_env),
     )

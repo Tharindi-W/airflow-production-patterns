@@ -69,3 +69,36 @@ def generate_daily_sales(load_date: date) -> list[dict]:
             }
         )
     return records
+
+
+def generate_orders(load_date: date, n: int = 50, inject_bad: bool = False) -> list[dict]:
+    """Return deterministic order rows for the data quality gate pattern.
+
+    With inject_bad=True, one row is appended with a null customer_id, which is
+    a deliberate data quality violation the gate must catch before load.
+    """
+    seed = int(load_date.strftime("%Y%m%d"))
+    rng = random.Random(seed)
+
+    records: list[dict] = []
+    for i in range(n):
+        records.append(
+            {
+                "order_id": f"{load_date:%Y%m%d}-O{i:04d}",
+                "load_date": load_date,
+                "customer_id": f"C{rng.randint(1000, 9999)}",
+                "amount": round(rng.uniform(5.0, 500.0), 2),
+            }
+        )
+
+    if inject_bad:
+        # A row that violates the not-null gate on customer_id.
+        records.append(
+            {
+                "order_id": f"{load_date:%Y%m%d}-OBAD",
+                "load_date": load_date,
+                "customer_id": None,
+                "amount": round(rng.uniform(5.0, 500.0), 2),
+            }
+        )
+    return records
