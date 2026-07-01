@@ -79,7 +79,7 @@ Status legend: done means implemented, tested, and documented. Planned means spe
 | 06 | [Dynamic task mapping](dags/06_dynamic_task_mapping/) | N runtime inputs produce N mapped tasks | done |
 | 07 | [Retries and failure isolation](dags/07_retries_and_failure_isolation/) | Partial success workflows with trigger rules | done |
 | 08 | [Data quality gates](dags/08_data_quality_gates/) | Bad batches are blocked before they reach the warehouse | done |
-| 09 | Multi system orchestration | API to object store to transform to warehouse, end to end with mocks | planned |
+| 09 | [Multi system orchestration](dags/09_multi_system_orchestration/) | API to object store to transform to warehouse, end to end with mocks | done |
 | 10 | Observability and monitoring hooks | Failure and success callbacks fire well formed alerts | planned |
 
 ## Repo layout
