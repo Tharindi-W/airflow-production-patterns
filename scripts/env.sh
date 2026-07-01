@@ -52,7 +52,7 @@ export AIRFLOW_CONN_WAREHOUSE="postgresql://${WAREHOUSE_USER}:${WAREHOUSE_PASSWO
 
 # Make the repo's shared code importable from DAGs:
 #   from include.python_utils...  and  from plugins.custom_operators...
-export PYTHONPATH="${REPO_ROOT}:${PYTHONPATH}"
+export PYTHONPATH="${REPO_ROOT}:${PYTHONPATH:-}"
 
 # Activate the project virtualenv if it exists.
 if [ -f "${AIRFLOW_VENV}/bin/activate" ]; then
