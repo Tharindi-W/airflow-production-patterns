@@ -41,3 +41,31 @@ def generate_transactions(load_date: date, n: int = DEFAULT_ROW_COUNT) -> list[d
             }
         )
     return records
+
+
+REGIONS = ("NA", "EU", "APAC")
+
+
+def generate_daily_sales(load_date: date) -> list[dict]:
+    """Return one deterministic daily sales roll-up per region for a date.
+
+    Used by the backfill-safe pattern. Like the transaction generator, this is
+    deterministic per date: the same date always yields the same partition, so
+    a re-run or a backfill of a date reproduces exactly that date's rows.
+    """
+    seed = int(load_date.strftime("%Y%m%d"))
+    rng = random.Random(seed)
+
+    records: list[dict] = []
+    for region in REGIONS:
+        txn_count = rng.randint(50, 500)
+        avg_amount = rng.uniform(10.0, 250.0)
+        records.append(
+            {
+                "load_date": load_date,
+                "region": region,
+                "txn_count": txn_count,
+                "total_amount": round(txn_count * avg_amount, 2),
+            }
+        )
+    return records
