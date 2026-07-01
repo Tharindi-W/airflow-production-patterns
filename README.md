@@ -80,7 +80,7 @@ Status legend: done means implemented, tested, and documented. Planned means spe
 | 07 | [Retries and failure isolation](dags/07_retries_and_failure_isolation/) | Partial success workflows with trigger rules | done |
 | 08 | [Data quality gates](dags/08_data_quality_gates/) | Bad batches are blocked before they reach the warehouse | done |
 | 09 | [Multi system orchestration](dags/09_multi_system_orchestration/) | API to object store to transform to warehouse, end to end with mocks | done |
-| 10 | Observability and monitoring hooks | Failure and success callbacks fire well formed alerts | planned |
+| 10 | [Observability and monitoring hooks](dags/10_production_monitoring_hooks/) | Failure and success callbacks fire well formed alerts | done |
 
 ## Repo layout
 
