@@ -61,8 +61,7 @@ pytest tests/dag_validation -v
 
 ## Hard conventions
 
-- No em dashes anywhere in code, docstrings, comments, or docs. A pre-commit hook enforces this.
-- Nothing is fabricated. Anything mocked is labelled as a mock.
+- Anything mocked is labelled as a mock.
 - Every pattern is runnable locally end to end. No pattern is documentation only.
 - Exact pinned versions in `requirements.txt`. No floating `latest`.
 
