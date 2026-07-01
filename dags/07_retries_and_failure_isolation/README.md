@@ -2,10 +2,17 @@
 
 When a pipeline fans out across many independent units of work, one unit failing should not take the whole run down with it. The healthy work should complete, the failure should be contained, and someone should be told. Trigger rules are how Airflow expresses that.
 
-```
-  create_tables --> [ fetch_region_A (ok)              ] --> aggregate (all_done)
-                    [ fetch_region_B (ok)              ]
-                    [ fetch_region_C (retries, fails)  ] --> flag_failures (all_done)
+```mermaid
+flowchart LR
+    A["🧱 create_tables"] --> RA["🟢 fetch_region_A"]
+    A --> RB["🟢 fetch_region_B"]
+    A --> RC["🔴 fetch_region_C · retries then fails"]
+    RA --> AG["📊 aggregate · all_done"]
+    RB --> AG
+    RC --> AG
+    RA --> FF["🧯 flag_failures · all_done detect"]
+    RB --> FF
+    RC --> FF
 ```
 
 - DAG id: `retries_and_failure_isolation`

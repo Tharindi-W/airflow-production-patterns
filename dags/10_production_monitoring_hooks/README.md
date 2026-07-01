@@ -2,12 +2,13 @@
 
 Airflow is useless without visibility. A pipeline that fails silently at 3am and is discovered at 9am when a report is wrong has failed twice: once in the data, and once in the operations. This pattern standardises how the pipeline tells you something happened.
 
-```
-  create_tables --> healthy_task  (on_success_callback --> alert)
-                --> failing_task  (on_failure_callback --> alert)
-                                        |
-                                        v
-                                 mock notifier -> core.alerts
+```mermaid
+flowchart LR
+    A["🧱 create_tables"] --> H["🟢 healthy_task · on_success"]
+    A --> F["🔴 failing_task · on_failure"]
+    H --> N["🔔 mock notifier"]
+    F --> N
+    N --> AL[("📥 core.alerts")]
 ```
 
 - DAG id: `observability_hooks`

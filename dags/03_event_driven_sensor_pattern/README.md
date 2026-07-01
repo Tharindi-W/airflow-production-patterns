@@ -2,10 +2,9 @@
 
 Pipelines often cannot start until something external arrives: a file lands, an object appears in a bucket, an upstream job signals completion. The naive answer is a fixed schedule plus hope. The better answer is to wait for the event, efficiently, and proceed the moment it arrives.
 
-```
-  wait_for_landing (reschedule sensor)  -->  process
-        ^ pokes every N seconds,
-          releases its worker slot between pokes
+```mermaid
+flowchart LR
+    W["👀 wait_for_landing · reschedule sensor · frees slot between pokes"] -->|event arrives| P["⚙️ process"]
 ```
 
 - DAG id: `event_driven_sensor_pattern`

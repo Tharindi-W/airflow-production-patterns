@@ -2,10 +2,9 @@
 
 Running the same logical date twice must not create duplicate rows in the warehouse. This is the most fundamental reliability property an ETL pipeline can have, and it is the one most often missing from pipelines written by people who learned Airflow from a tutorial.
 
-```
-  create_tables  -->  extract  -->  load  -->  verify
-   (schema, DDL)     (mock src      (upsert    (row count
-                      to staging)    by PK)     + hash)
+```mermaid
+flowchart LR
+    A["🧱 create_tables"] --> B["📥 extract → staging"] --> C["🔀 load · upsert by PK"] --> D["🔎 verify · count + hash"]
 ```
 
 - DAG id: `idempotent_etl_pipeline`

@@ -2,11 +2,9 @@
 
 External APIs throttle and fail. Pull from one naively and the first burst of 429 Too Many Requests or a transient 5xx takes your pipeline down and pages someone at 3am. This pattern absorbs that turbulence automatically.
 
-```
-  create_tables  -->  ingest (custom operator)  -->  verify
-                        |  rate limit each call
-                        |  retry 429/5xx with exponential backoff + jitter
-                        |  upsert by primary key (idempotent)
+```mermaid
+flowchart LR
+    A["🧱 create_tables"] --> B["🌐 ingest · rate limit · backoff+jitter on 429/5xx · idempotent upsert"] --> C["🔎 verify"]
 ```
 
 - DAG id: `api_ingestion_with_throttling`

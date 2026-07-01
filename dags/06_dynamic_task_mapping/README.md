@@ -2,10 +2,9 @@
 
 The amount of work is frequently unknown until the run starts. An hourly job might find three files or three hundred. Writing a fixed number of tasks cannot express "one task per thing that showed up". Dynamic task mapping, the Airflow 2 feature `.expand()`, generates one mapped task instance per input at run time, so the DAG shape follows the data.
 
-```
-  create_tables --> list_inputs --> process_one [expand over N inputs] --> summarize
-                       (returns             (N mapped instances,
-                        a list of N)         one per input)
+```mermaid
+flowchart LR
+    A["🧱 create_tables"] --> L["🔍 list_inputs · N paths at runtime"] --> M["🧬 process_one · expand to N tasks"] --> Z["📊 summarize"]
 ```
 
 - DAG id: `dynamic_task_mapping`

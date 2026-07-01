@@ -2,13 +2,11 @@
 
 Bad data is worse than no data. A load that quietly ingests nulls, negative amounts, or a truncated batch corrupts every downstream report and is often noticed only after someone makes a decision on it. A quality gate stops the bad batch at the door.
 
-```
-  create_tables --> extract (stage batch) --> quality_gate --> load
-                                                  |  row count
-                                                  |  not-null checks
-                                                  |  non-negative amounts
-                                                  v
-                                          fail here blocks load
+```mermaid
+flowchart LR
+    A["🧱 create_tables"] --> E["📥 extract · stage batch"] --> G{"✅ quality_gate"}
+    G -->|pass| L["🔀 load"]
+    G -->|fail| X["🛑 blocked · no load"]
 ```
 
 - DAG id: `data_quality_gates`

@@ -13,8 +13,9 @@ from __future__ import annotations
 
 import sys
 
-# U+2014 EM DASH and U+2013 EN DASH. Both are banned.
-FORBIDDEN = {"—": "em dash", "–": "en dash"}
+# U+2014 EM DASH and U+2013 EN DASH. Both are banned. Built with chr() on
+# purpose, so this file itself contains no literal dash for the check to trip on.
+FORBIDDEN = {chr(0x2014): "em dash", chr(0x2013): "en dash"}
 
 
 def check_file(path: str) -> list[str]:

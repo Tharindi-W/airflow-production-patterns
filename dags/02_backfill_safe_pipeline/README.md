@@ -2,8 +2,9 @@
 
 Historical reprocessing must not corrupt data. When you backfill a month of history, each day must land in its own place and leave every other day exactly as it was. This pattern makes that guarantee structural rather than hopeful.
 
-```
-  create_tables  -->  load (this date's partition only)  -->  verify
+```mermaid
+flowchart LR
+    A["🧱 create_tables"] --> B["📦 load · rebuild THIS date's partition only"] --> C["🔎 verify · count + partition hash"]
 ```
 
 - DAG id: `backfill_safe_pipeline`

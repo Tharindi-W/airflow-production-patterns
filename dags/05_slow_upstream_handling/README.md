@@ -2,9 +2,12 @@
 
 Upstream systems are unreliable, and the failure mode that catches people out is not a clean error but a slow one: a source that hangs, or takes ten times as long as usual. Without defences, one slow source stalls the whole pipeline and a worker slot sits blocked. This pattern bounds the slowness and isolates it.
 
-```
-  create_tables --> [ fetch_fast (retries)      ] --> build_report (all_done)
-                    [ fetch_slow (timeout, no retry) ]
+```mermaid
+flowchart LR
+    A["🧱 create_tables"] --> F["🐇 fetch_fast · retries"]
+    A --> S["🐢 fetch_slow · execution_timeout · no retry"]
+    F --> R["📋 build_report · all_done"]
+    S --> R
 ```
 
 - DAG id: `slow_upstream_handling`

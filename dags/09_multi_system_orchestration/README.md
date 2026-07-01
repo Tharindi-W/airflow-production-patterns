@@ -2,11 +2,9 @@
 
 A pipeline of any real ambition spans several systems: an API, an object store, a transform engine, a warehouse, a BI tool. Orchestrating that is system thinking, not task thinking. The job of the orchestrator is to move data across those boundaries reliably, with each hop behind a clear interface so any single system can be swapped or mocked.
 
-```
-  create_tables --> extract_from_api --> transform --> load_to_warehouse --> refresh_bi
-                        |                    |               |                    |
-                     mock API           object store     Postgres            mock BI
-                                        (mock S3)         warehouse           dashboard
+```mermaid
+flowchart LR
+    A["🌐 extract_from_api"] --> B["🪣 object store · mock S3"] --> C["🔧 transform"] --> D["🐘 load_to_warehouse"] --> E["📈 refresh_bi · mock"]
 ```
 
 - DAG id: `multi_system_orchestration`
