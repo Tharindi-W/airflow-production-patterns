@@ -15,4 +15,4 @@ A one line statement of the production problem each pattern solves. This is the 
 | 09 | Multi system orchestration | A flow that spans several systems must be coordinated behind clear interfaces. |
 | 10 | Observability and monitoring hooks | An orchestration with no visibility into failures is operationally blind. |
 
-Status: Pattern 01 is implemented. Patterns 02 through 10 are specified and will be added one at a time, each passing the DAG validation suite and running end to end locally before the next is started.
+Status: Patterns 01 through 04 are implemented, tested, and documented. Patterns 05 through 10 are specified and will be added one at a time, each passing the DAG validation suite and running end to end locally before the next is started.
