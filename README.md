@@ -76,7 +76,7 @@ Status legend: done means implemented, tested, and documented. Planned means spe
 | 03 | [Event driven sensor](dags/03_event_driven_sensor_pattern/) | Wait efficiently in reschedule mode rather than poll blindly | done |
 | 04 | [API ingestion with throttling](dags/04_api_ingestion_with_throttling/) | Survive 429 and 5xx with backoff and rate limiting | done |
 | 05 | [Slow upstream handling](dags/05_slow_upstream_handling/) | A slow stage does not cascade into downstream failure | done |
-| 06 | Dynamic task mapping | N runtime inputs produce N mapped tasks | planned |
+| 06 | [Dynamic task mapping](dags/06_dynamic_task_mapping/) | N runtime inputs produce N mapped tasks | done |
 | 07 | Retries and failure isolation | Partial success workflows with trigger rules | planned |
 | 08 | Data quality gates | Bad batches are blocked before they reach the warehouse | planned |
 | 09 | Multi system orchestration | API to object store to transform to warehouse, end to end with mocks | planned |
